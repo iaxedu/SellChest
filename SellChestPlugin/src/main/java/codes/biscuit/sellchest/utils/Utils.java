@@ -71,6 +71,10 @@ public class Utils {
         sellTimerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, () -> {
             Iterator<Map.Entry<Location, UUID>> entryIterator = chestLocations.entrySet().iterator();
             Set<UUID> offlineUuids = new HashSet<>();
+            int numSold = 0;
+            int total = chestLocations.entrySet().size();
+            System.out.println("Sellchest selling");
+            System.out.println("Sellchest : There are " + total + " chests to check");
             while (entryIterator.hasNext()) {
                 Map.Entry<Location, UUID> locationEntry = entryIterator.next();
                 Player player = offlineUuids.contains(locationEntry.getValue()) ? null : main.getServer().getPlayer(locationEntry.getValue());
@@ -78,6 +82,7 @@ public class Utils {
                     offlineUuids.add(locationEntry.getValue());
                     continue;
                 }
+                numSold++;
                 Location loc = locationEntry.getKey();
                 if (loc == null) {
                     entryIterator.remove();
@@ -87,6 +92,7 @@ public class Utils {
                 if (block == null) {
                     continue;
                 }
+                
                 if (block.getType() == Material.CHEST) {
                     Chest voidChest = (Chest)block.getState();
                     Inventory voidChestInventory = voidChest.getInventory();
@@ -113,6 +119,7 @@ public class Utils {
                     entryIterator.remove();
                 }
             }
+            System.out.println("Sellchest : Finished checking. " + numSold + " chests have been checked. Others have been skipped.");
         }, main.getConfigValues().getSellInterval(), main.getConfigValues().getSellInterval());
     }
 
