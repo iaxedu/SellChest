@@ -70,9 +70,14 @@ public class Utils {
     public void runSellTimer() {
         sellTimerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, () -> {
             Iterator<Map.Entry<Location, UUID>> entryIterator = chestLocations.entrySet().iterator();
+            Set<UUID> offlineUuids = new HashSet<>();
             while (entryIterator.hasNext()) {
                 Map.Entry<Location, UUID> locationEntry = entryIterator.next();
-                OfflinePlayer offlineP = main.getServer().getOfflinePlayer(locationEntry.getValue());
+                Player player = offlineUuids.contains(locationEntry.getValue()) ? null : main.getServer().getPlayer(locationEntry.getValue());
+                if (player == null) {
+                    offlineUuids.add(locationEntry.getValue());
+                    continue;
+                }
                 Location loc = locationEntry.getKey();
                 if (loc == null) {
                     entryIterator.remove();
